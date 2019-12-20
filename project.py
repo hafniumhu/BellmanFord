@@ -1,16 +1,6 @@
-"""
-Math 590
-Project 3
-Fall 2019
-
-Partner 1: Feng Hu (fh65)
-Partner 2: Lingzhuo Zhao (lz171)
-Date: Nov/11/2019
-"""
-
 # Import math and p3tests.
-from p3tests import *
-from p3currencies import *
+from tests import *
+from currencies import *
 
 ################################################################################
 

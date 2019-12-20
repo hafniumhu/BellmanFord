@@ -1,13 +1,9 @@
 """
-Math 590
-Project 3
-Fall 2019
-
-p2tests.py
+tests.py
 """
 
 # Import the Currencies class.
-from p3currencies import *
+from currencies import *
 
 """
 testRates function will test all of the exchange rate examples.

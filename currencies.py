@@ -1,14 +1,10 @@
 """
-Math 590
-Project 3
-Fall 2019
-
-p3currencies.py
+currencies.py
 """
 
 # Import the Vertex class and project3.py functions.
-from p3vertex import *
-from project3 import detectArbitrage, rates2mat
+from vertex import *
+from project import detectArbitrage, rates2mat
 
 """
 Currencies Class

@@ -1,9 +1,5 @@
 """
-Math 590
-Project 3
-Fall 2019
-
-p3vertex.py
+vertex.py
 """
 
 # Import math.
