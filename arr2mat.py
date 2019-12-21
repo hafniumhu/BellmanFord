@@ -26,11 +26,18 @@ def arr2mat(arr):
         if curr_remainder == day - 1:
             rates[i][curr_start] = 1
 
+        # Above diagonal entries
+        for j in range(curr_start + day, size, day):2
+            rates[i][j] = arr[i % day][j // day] / arr[i % day][i//day]
+
         for j in range(size):
             # Same currency entries (1's)
-            if i <= j < curr_start + day: # days = 3
+            if i <= j < curr_start + day:
                 rates[i][j] = 1
 
-            # Different currency entries
-            if j >= curr_start + day:
-                
+            # Below diagonal entries
+            if j < i:
+                if rates[i][j] != 1 and rates[i][j] != math.inf:
+                    rates[i][j] = 1 / rates[j][i]
+
+    return rates
