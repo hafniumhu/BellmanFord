@@ -11,6 +11,7 @@ Date: Nov/11/2019
 # Import math and p3tests.
 from p3tests import *
 from p3currencies import *
+from arr2mat import *
 
 ################################################################################
 
@@ -111,4 +112,10 @@ def rates2mat(rates):
 Main function.
 """
 if __name__ == "__main__":
-    testRates()
+    # testRates()
+    arr = [[1, 2, 3],
+           [1, 2, 3],
+           [1, 2, 3]]
+    mat = arr2mat(arr)
+    for row in mat:
+        print(row)
