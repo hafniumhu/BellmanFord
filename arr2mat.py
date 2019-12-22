@@ -27,7 +27,7 @@ def arr2mat(arr):
             rates[i][curr_start] = 1
 
         # Above diagonal entries
-        for j in range(curr_start + day, size, day):2
+        for j in range(curr_start + day + i % day, size, day):
             rates[i][j] = arr[i % day][j // day] / arr[i % day][i//day]
 
         for j in range(size):
