@@ -112,10 +112,4 @@ def rates2mat(rates):
 Main function.
 """
 if __name__ == "__main__":
-    # testRates()
-    arr = [[1, 2, 5],
-           [1, 2, 5],
-           [1, 2, 5]]
-    mat = arr2mat(arr)
-    for row in mat:
-        print(row)
+    testRates()
