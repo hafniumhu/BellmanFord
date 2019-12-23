@@ -16,8 +16,7 @@ testRates function will test all of the exchange rate examples.
 
 def testRates():
     print()
-    print('Testing Exchange Rates 0')
-    print()
+    print('Testing Exchange Rates:')
     c = Currencies()
     #print(c)
     if not c.arbitrage():

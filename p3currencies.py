@@ -48,7 +48,6 @@ class Currencies:
         # Now get the adjacency matrix using the exchange rates.
         # Note: you will write this function above.
         self.adjMat = rates2mat(self.rates)
-        #print(self.adjMat)
 
         # Set the negative cost cycle (nothing yet).
         self.negCyc = []
