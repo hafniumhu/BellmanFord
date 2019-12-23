@@ -19,8 +19,8 @@ def prediction(df):
     # plt.show()
     return temp
 
-def getData():
-    df = pd.read_csv('currencies12081214.csv')
+def getData(filename):
+    df = pd.read_csv(filename)
     df = df[['Currency code', 'Date', 'Units per USD']]
     date = df['Date']
     date = date.drop_duplicates()
@@ -43,13 +43,11 @@ def getData():
 
     Predictionmatrix = np.zeros((7, 10))
 
-    for i in range(7):
-        for k in range(10):
-            matrix[i][k] = allRates.pop(0)
     for k in range(10):
         a = pd.concat([date, df[k]], axis=1)
         predictionData = prediction(a)
-        predictionmatrix[]
+        for m in range(7):
+            Predictionmatrix[m][k] = predictionData[m]
 
 
     return Predictionmatrix
