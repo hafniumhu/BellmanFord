@@ -58,7 +58,7 @@ def detectArbitrage(currencies, tol=1e-15):
         curr = currencies.adjList[neg_v]
 
         # Push new rank values to the front of list
-        # if the new rank is not the repeated in the list
+        # if the new rank is not repeated in the list
         while curr.rank not in neg_cyc:
             neg_cyc.insert(0, curr.rank)
             curr = curr.prev
@@ -113,9 +113,9 @@ Main function.
 """
 if __name__ == "__main__":
     # testRates()
-    arr = [[1, 2, 3],
-           [1, 2, 3],
-           [1, 2, 3]]
+    arr = [[1, 2, 5],
+           [1, 2, 5],
+           [1, 2, 5]]
     mat = arr2mat(arr)
     for row in mat:
         print(row)
