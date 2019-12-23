@@ -37,7 +37,7 @@ def arr2mat(arr):
 
             # Below diagonal entries
             if j < i:
-                if rates[i][j] != 1 and rates[i][j] != math.inf:
+                if rates[j][i] != 1 and rates[j][i] != math.inf:
                     rates[i][j] = 1 / rates[j][i]
 
     return rates
