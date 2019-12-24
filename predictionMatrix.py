@@ -67,3 +67,8 @@ def getData(filename):
 
 
     return Predictionmatrix
+
+if __name__ == '__main__':
+    file = "currencies12081214.csv"
+    Predictionmatrix = getData(file)
+    print(Predictionmatrix)
