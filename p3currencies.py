@@ -167,12 +167,14 @@ def getRates():
     print('------------------------')
 
     # Initialize currency strings
-    currs = [['USD0', 'GBP0', 'INR0', 'AUD0', 'CAD0', 'SGD0', 'CHF0', 'MYR0', 'JPY0'],
-             ['USD1', 'GBP1', 'INR1', 'AUD1', 'CAD1', 'SGD1', 'CHF1', 'MYR1', 'JPY1'],
-             ['USD2', 'GBP2', 'INR2', 'AUD2', 'CAD2', 'SGD2', 'CHF2', 'MYR2', 'JPY2'],
-             ['USD3', 'GBP3', 'INR3', 'AUD3', 'CAD3', 'SGD3', 'CHF3', 'MYR3', 'JPY3'],
-             ['USD4', 'GBP4', 'INR4', 'AUD4', 'CAD4', 'SGD4', 'CHF4', 'MYR4', 'JPY4'],
-             ['USD5', 'GBP5', 'INR5', 'AUD5', 'CAD5', 'SGD5', 'CHF5', 'MYR5', 'JPY5'],
-             ['USD6', 'GBP6', 'INR6', 'AUD6', 'CAD6', 'SGD6', 'CHF6', 'MYR6', 'JPY6']]
+    currs = ['USD0', 'GBP0', 'INR0', 'USD1', 'GBP1', 'INR1', 'USD2', 'GBP2', 'INR2']
+
+    # currs = [['USD0', 'GBP0', 'INR0', 'AUD0', 'CAD0', 'SGD0', 'CHF0', 'MYR0', 'JPY0'],
+    #          ['USD1', 'GBP1', 'INR1', 'AUD1', 'CAD1', 'SGD1', 'CHF1', 'MYR1', 'JPY1'],
+    #          ['USD2', 'GBP2', 'INR2', 'AUD2', 'CAD2', 'SGD2', 'CHF2', 'MYR2', 'JPY2'],
+    #          ['USD3', 'GBP3', 'INR3', 'AUD3', 'CAD3', 'SGD3', 'CHF3', 'MYR3', 'JPY3'],
+    #          ['USD4', 'GBP4', 'INR4', 'AUD4', 'CAD4', 'SGD4', 'CHF4', 'MYR4', 'JPY4'],
+    #          ['USD5', 'GBP5', 'INR5', 'AUD5', 'CAD5', 'SGD5', 'CHF5', 'MYR5', 'JPY5'],
+    #          ['USD6', 'GBP6', 'INR6', 'AUD6', 'CAD6', 'SGD6', 'CHF6', 'MYR6', 'JPY6']]
 
     return rates, currs
