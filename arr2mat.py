@@ -14,7 +14,7 @@ def arr2mat(arr):
     day = len(arr)
     curr = len(arr[0])
     size = day * curr
-    rates = [[math.inf for x in range(size)] for x in range(size)]
+    rates = [[0.000000001 for x in range(size)] for x in range(size)]
 
     # Construct rates
     for i in range(size):
@@ -37,7 +37,7 @@ def arr2mat(arr):
 
             # Below diagonal entries
             if j < i:
-                if rates[j][i] != 1 and rates[j][i] != math.inf:
+                if rates[j][i] != 1 and rates[j][i] != 0.000000001:
                     rates[i][j] = 1 / rates[j][i]
 
     return rates

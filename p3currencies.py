@@ -155,8 +155,8 @@ def getRates():
     # Get the exchange rates.
     # arr = getData()
     arr = [[1, 2, 5],
-           [1, 2, 5],
-           [1, 2, 5]]
+           [1, 3, 2],
+           [1, 9, 5]]
     rates = arr2mat(arr)
 
     # Print rates matrix
