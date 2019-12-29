@@ -1,7 +1,11 @@
 import pandas as pd
 import numpy as np
+from pymongo import MongoClient
 from matplotlib import pyplot as plt
 from fbprophet import Prophet
+import datetime
+import csv
+
 
 """
 This function inputs datafram with first column ds(Date),
@@ -9,8 +13,10 @@ second column historical currency rate.
 It returns a array which is the prediction of currency
 for next 7 future days. 
 """
+
+
 def prediction(df):
-    #Eliminate empty values
+    # Eliminate empty values
     df = df[np.isfinite(df['y'])]
     m = Prophet()
     m.fit(df)
@@ -24,40 +30,43 @@ def prediction(df):
     # plt.show()
     return temp
 
+
 """
 This function read historical data from cvs file.
 Return the 7*10 matrix with prediction currency rates.
 """
-def getData(filename):
-    df = pd.read_csv(filename)
+
+
+def getData(fileName):
+    df = pd.read_csv(fileName)
     df = df[['Currency code', 'Date', 'Units per USD']]
-    #Get Date data from the datafram and eliminate repeated date
+    # Get Date data from the datafram and eliminate repeated date
     date = df['Date']
     date = date.drop_duplicates()
     date = date.dropna()
     date = date.reset_index(drop=True)
 
-    #Get currency exchange rates and eliminate nan data
+    # Get currency exchange rates and eliminate nan data
     allRates = np.array(df['Units per USD'])
     allRates = allRates[np.logical_not(np.isnan(allRates))]
     allRates = allRates.tolist()
 
-    #Initialize historical data to matrix for prediction
-    #We need more data to do prediction.
-    #Number of rows is number of days we used to predict
-    #Each column represents each currency
+    # Initialize historical data to matrix for prediction
+    # We need more data to do prediction.
+    # Number of rows is number of days we used to predict
+    # Each column represents each currency
     matrix = np.zeros((7, 10))
     for i in range(7):
         for k in range(10):
             matrix[i][k] = allRates.pop(0)
 
-    #Concat historical matrix to original datafram
+    # Concat historical matrix to original datafram
     df = pd.concat([df, pd.DataFrame(matrix)], axis=1)
 
-    #Initialize prediction matrix
+    # Initialize prediction matrix
     Predictionmatrix = np.zeros((7, 10))
 
-    #call predicton function for each currency
+    # call predicton function for each currency
     for k in range(10):
         a = pd.concat([date, df[k]], axis=1)
         a = a.rename(columns={"Date": "ds", k: "y"})
@@ -65,10 +74,39 @@ def getData(filename):
         for m in range(7):
             Predictionmatrix[m][k] = predictionData[m]
 
-
     return Predictionmatrix
 
+
+def db2csv(fileName):
+    # db preparation.
+    client = MongoClient('localhost', 27017)  # Client: Make a connection
+    db = client['currency']  # DB: currency
+    db_prices = db['prices']  # Collection: prices
+
+    # query: date & 10 currencies.
+    df = db_prices.find({
+        'Date': {'$lt': datetime.datetime.now(),
+                 '$gte': datetime.datetime.now() - datetime.timedelta(days=60),
+                 }, 'Currency code': {'$in': ['USD', 'EUR', 'GBP', 'INR', 'AUD', 'CAD', 'SGD', 'CHF', 'MYR', 'JPY']}})
+    # write a new csv file.
+    with open(fileName, 'w', encoding='utf-8', newline='') as files:
+        csvfiles = csv.DictWriter(
+            files, fieldnames=['Currency code', 'Date', 'Units per USD'])
+        csvfiles.writeheader()
+        n = 1
+        for i in df:
+            csvfiles.writerow(
+                {'Currency code': i['Currency code'],
+                 'Date': i['Date'],
+                 'Units per USD': i['Units per USD']})
+            n += 1
+    # close db connection.
+    client.close()
+
+
 if __name__ == '__main__':
-    file = "currencies12081214.csv"
-    Predictionmatrix = getData(file)
+    fileName = "data.csv"
+
+    db2csv(fileName)
+    Predictionmatrix = getData(fileName)
     print(Predictionmatrix)
