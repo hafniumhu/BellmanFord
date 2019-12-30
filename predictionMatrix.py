@@ -1,10 +1,16 @@
+import contextlib
+import sys
+import os
 import pandas as pd
 import numpy as np
-from pymongo import MongoClient
+from pymongo import MongoClient, DESCENDING
 from matplotlib import pyplot as plt
 from fbprophet import Prophet
 import datetime
 import csv
+import logging
+from suppress_stdout_stderr import suppress_stdout_stderr
+logging.getLogger('fbprophet').setLevel(logging.WARNING)
 
 
 """
@@ -14,21 +20,24 @@ It returns a array which is the prediction of currency
 for next 7 future days. 
 """
 
+currency_codes = ['USD', 'EUR', 'GBP', 'INR',
+                  'AUD', 'CAD', 'SGD', 'CHF', 'MYR', 'JPY']
 
-def prediction(df):
-    # Eliminate empty values
-    df = df[np.isfinite(df['y'])]
-    m = Prophet()
-    m.fit(df)
-    future = m.make_future_dataframe(periods=7)
-    future.tail()
-    forecast = m.predict(future)
-    forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].tail()
-    temp = np.array(forecast['yhat'][-7:])
-    # fig1 = m.plot(forecast)
-    # fig2 = m.plot_components(forecast)
-    # plt.show()
-    return temp
+with contextlib.redirect_stdout(None):
+    def prediction(df):
+        # Eliminate empty values
+        df = df[np.isfinite(df['y'])]
+        m = Prophet()
+        m.fit(df)
+        future = m.make_future_dataframe(periods=7)
+        future.tail()
+        forecast = m.predict(future)
+        forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].tail()
+        temp = np.array(forecast['yhat'][-7:])
+        # fig1 = m.plot(forecast)
+        # fig2 = m.plot_components(forecast)
+        # plt.show()
+        return temp
 
 
 """
@@ -70,11 +79,18 @@ def getData(fileName):
     for k in range(10):
         a = pd.concat([date, df[k]], axis=1)
         a = a.rename(columns={"Date": "ds", k: "y"})
-        predictionData = prediction(a)
+        with suppress_stdout_stderr():
+            predictionData = prediction(a)
         for m in range(7):
             Predictionmatrix[m][k] = predictionData[m]
 
     return Predictionmatrix
+
+
+"""
+db2csv(fileName):
+generate csv file using db query result.
+"""
 
 
 def db2csv(fileName):
@@ -87,7 +103,7 @@ def db2csv(fileName):
     df = db_prices.find({
         'Date': {'$lt': datetime.datetime.now(),
                  '$gte': datetime.datetime.now() - datetime.timedelta(days=60),
-                 }, 'Currency code': {'$in': ['USD', 'EUR', 'GBP', 'INR', 'AUD', 'CAD', 'SGD', 'CHF', 'MYR', 'JPY']}})
+                 }, 'Currency code': {'$in': currency_codes}}).sort('Date', DESCENDING)
     # write a new csv file.
     with open(fileName, 'w', encoding='utf-8', newline='') as files:
         csvfiles = csv.DictWriter(
@@ -104,9 +120,36 @@ def db2csv(fileName):
     client.close()
 
 
-if __name__ == '__main__':
-    fileName = "data.csv"
+"""
+curr_codes_date():
+Generate rates matrix header.
+"""
 
+
+def curr_codes_date():
+    curr_codes_withdate = []
+    for code in currency_codes:
+        # Todo: change number postfix into date.
+        for k in range(7):
+            curr_codes_withdate.append(code + str(k))
+    return curr_codes_withdate
+
+
+"""
+predict():
+return the raw rates matrix: 7 * 10.
+"""
+
+
+def predict():
+    fileName = "data.csv"
+    # generate csv file contain recent 60 days rates.
     db2csv(fileName)
+    # predict next 7 days.
+    print("Predicting...")
     Predictionmatrix = getData(fileName)
-    print(Predictionmatrix)
+    return Predictionmatrix
+
+
+# if __name__ == '__main__':
+#     print(predict())

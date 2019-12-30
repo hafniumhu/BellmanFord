@@ -18,7 +18,7 @@ def testRates():
     print()
     print('Testing Exchange Rates:')
     c = Currencies()
-    #print(c)
+    # print(c)
     if not c.arbitrage():
         print('No arbitrage for Exchange Rates 0')
     else:

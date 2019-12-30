@@ -10,6 +10,7 @@ p3currencies.py
 from p3vertex import *
 from project3 import detectArbitrage, rates2mat
 from arr2mat import *
+from predictionMatrix import *
 
 """
 Currencies Class
@@ -19,7 +20,7 @@ Currencies Class
 class Currencies:
     """
     Class attributes:
-    
+
     rates   # A 2D list of the different exchange rates.
     currs   # A list of the currency names as strings.
     adjList # The adjacency list for the currencies.
@@ -43,7 +44,7 @@ class Currencies:
         # so the neigh list will be every other vertex.
         for vInd in range(0, len(self.adjList)):
             (self.adjList[vInd]).neigh = self.adjList[0:vInd] + \
-                                         self.adjList[vInd + 1:]
+                self.adjList[vInd + 1:]
 
         # Now get the adjacency matrix using the exchange rates.
         # Note: you will write this function above.
@@ -130,7 +131,7 @@ class Currencies:
                     print('Arbitrage Cycle:')
                     print()
                     self.printArb()
-                    print('For gain of: %f %ss' % \
+                    print('For gain of: %f %ss' %
                           ((arb - 1), self.currs[self.negCyc[0]]))
                     print()
                     return True
@@ -150,24 +151,48 @@ rates: a 2D list representing the exchange rates
 currs: the list of currency names
 """
 
+# Print rates formatted matrix.
+
+
+def format(list):
+    formatted = []
+    for item in list:
+        if(item < 1e-08):
+            formatted.append("    ")
+        else:
+            formatted.append("{:4.2f}".format(item))
+    return formatted
+
 
 def getRates():
     # Get the exchange rates.
     # arr = getData()
-    arr = [[1, 2, 5],
-           [1, 3, 2],
-           [1, 9, 5]]
+    # arr = [[1, 2, 5],
+    #        [1, 3, 2],
+    #        [1, 9, 5]]
+
+    # Get rates matrix(7 days 10 currencies)
+    # by calling predict() in predictionMatrix.py.
+    arr = predict()
+    # Convert raw rates into rates matrix(based on algorithm design)
     rates = arr2mat(arr)
 
+    # for debug reason(formatted print), convert it into numpy matrix.
+    rates = np.array(rates)
     # Print rates matrix
     print('------------------------')
     print('Matrix of exchange rates:')
-    for row in rates:
-        print(row)
+    print(rates)
+    # for row in rates:
+    #     print("[{}]".format(', '.join(format(row))))
     print('------------------------')
 
-    # Initialize currency strings
-    currs = ['USD0', 'GBP0', 'INR0', 'USD1', 'GBP1', 'INR1', 'USD2', 'GBP2', 'INR2']
+    # Initialize rates matrix header
+    # by calling curr_codes_date() in predictionMatrix.py.
+    currs = curr_codes_date()
+    # currs = ['USD0', 'USD1', 'USD2',
+    #          'GBP0', 'GBP1', 'GBP2',
+    #          'INR0', 'INR1', 'INR2']
 
     # currs = [['USD0', 'GBP0', 'INR0', 'AUD0', 'CAD0', 'SGD0', 'CHF0', 'MYR0', 'JPY0'],
     #          ['USD1', 'GBP1', 'INR1', 'AUD1', 'CAD1', 'SGD1', 'CHF1', 'MYR1', 'JPY1'],

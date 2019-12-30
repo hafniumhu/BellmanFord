@@ -39,36 +39,57 @@ def detectArbitrage(currencies, tol=1e-15):
             for neighbor in u.neigh:
                 # Update distance if the new value is better
                 if neighbor.dist > u.dist + currencies.adjMat[u.rank][neighbor.rank] + tol:
-                    neighbor.dist = u.dist + currencies.adjMat[u.rank][neighbor.rank]
+                    neighbor.dist = u.dist + \
+                        currencies.adjMat[u.rank][neighbor.rank]
                     neighbor.prev = u
 
     # Initialize empty list for negative cost cycle
     neg_cyc = []
 
     # Run Bellman-Ford one more time to detect neg_cyc
-    neg_v = detectArbitrage_helper(currencies, tol)
+    neg_v_list = detectArbitrage_helper(currencies, tol)
+    neg_cyc_list = []
 
     # Return empty list if no negative cycles exist
-    if neg_v is None:
+    if not neg_v_list:
         return neg_cyc
 
     # Trace back to add ranks to the list otherwise
     else:
-        # Assign current to start tracing back
-        curr = currencies.adjList[neg_v]
+        for neg_v in neg_v_list:
+            # Assign current to start tracing back
+            curr = currencies.adjList[neg_v]
 
-        # Push new rank values to the front of list
-        # if the new rank is not repeated in the list
-        while curr.rank not in neg_cyc:
+            # Push new rank values to the front of list
+            # if the new rank is not repeated in the list
+            while curr.rank not in neg_cyc:
+                neg_cyc.insert(0, curr.rank)
+                curr = curr.prev
+
+            # Put in the starting vertex's rank again
+            index = neg_cyc.index(curr.rank)
             neg_cyc.insert(0, curr.rank)
-            curr = curr.prev
 
-        # Put in the starting vertex's rank again
-        index = neg_cyc.index(curr.rank)
-        neg_cyc.insert(0, curr.rank)
+            # Slice the list to get negative cycle
+            neg_cyc_list.append(neg_cyc[0:index + 2])
 
-        # Slice the list to get negative cycle
-        return neg_cyc[0:index + 2]
+    # a dict to store info.
+    max_neg_cyc = {}
+    max_neg_cyc['v_list'] = []
+    max_neg_cyc['arb'] = 1
+
+    for neg_c_ind in range(0, len(neg_cyc_list)):
+        neg_c = neg_cyc_list[neg_c_ind]
+        arb = 1
+        for cInd in range(0, len(neg_c) - 1):
+            arb *= currencies.rates[neg_c[cInd]][neg_c[cInd + 1]]
+        # Update max_neg_cyc.
+        if arb > max_neg_cyc['arb']:
+            max_neg_cyc['v_list'] = neg_c
+            max_neg_cyc['arb'] = arb
+
+    return max_neg_cyc['v_list']
+
 
 """
 detectArbitrage_helper
@@ -79,6 +100,8 @@ Output: A rank value if there is negative cost cycle (None if there isn't)
 
 
 def detectArbitrage_helper(currencies, tol=1e-15):
+    changeList = []
+
     # Look at each vertex
     for u in currencies.adjList:
         # Check each neighbor and update prediction & prev
@@ -87,9 +110,9 @@ def detectArbitrage_helper(currencies, tol=1e-15):
             if neighbor.dist > u.dist + currencies.adjMat[u.rank][neighbor.rank] + tol:
                 neighbor.prev = u
                 # Return the rank value of the neighbor changed
-                return neighbor.rank
+                changeList.append(neighbor.rank)
     # Return none if no arbitrage is found
-    return None
+    return changeList
 
 
 ################################################################################
