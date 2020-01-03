@@ -182,7 +182,8 @@ def getRates():
     # Print rates matrix
     print('------------------------')
     print('Matrix of exchange rates:')
-    print(rates)
+    with np.printoptions(precision=3, suppress=True, linewidth=140):
+        print(rates)
     # for row in rates:
     #     print("[{}]".format(', '.join(format(row))))
     print('------------------------')

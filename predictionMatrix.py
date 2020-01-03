@@ -22,6 +22,10 @@ for next 7 future days.
 
 currency_codes = ['USD', 'EUR', 'GBP', 'INR',
                   'AUD', 'CAD', 'SGD', 'CHF', 'MYR', 'JPY']
+# CURS_COUNT <= 10.
+CURS_COUNT = 10
+DAYS_COUNT = 7
+BASIS_COUNT = 60
 
 with contextlib.redirect_stdout(None):
     def prediction(df):
@@ -29,11 +33,11 @@ with contextlib.redirect_stdout(None):
         df = df[np.isfinite(df['y'])]
         m = Prophet()
         m.fit(df)
-        future = m.make_future_dataframe(periods=7)
+        future = m.make_future_dataframe(periods=DAYS_COUNT)
         future.tail()
         forecast = m.predict(future)
         forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].tail()
-        temp = np.array(forecast['yhat'][-7:])
+        temp = np.array(forecast['yhat'][-DAYS_COUNT:])
         # fig1 = m.plot(forecast)
         # fig2 = m.plot_components(forecast)
         # plt.show()
@@ -64,24 +68,24 @@ def getData(fileName):
     # We need more data to do prediction.
     # Number of rows is number of days we used to predict
     # Each column represents each currency
-    matrix = np.zeros((7, 10))
-    for i in range(7):
-        for k in range(10):
+    matrix = np.zeros((DAYS_COUNT, CURS_COUNT))
+    for i in range(DAYS_COUNT):
+        for k in range(CURS_COUNT):
             matrix[i][k] = allRates.pop(0)
 
     # Concat historical matrix to original datafram
     df = pd.concat([df, pd.DataFrame(matrix)], axis=1)
 
     # Initialize prediction matrix
-    Predictionmatrix = np.zeros((7, 10))
+    Predictionmatrix = np.zeros((DAYS_COUNT, CURS_COUNT))
 
     # call predicton function for each currency
-    for k in range(10):
+    for k in range(CURS_COUNT):
         a = pd.concat([date, df[k]], axis=1)
         a = a.rename(columns={"Date": "ds", k: "y"})
         with suppress_stdout_stderr():
             predictionData = prediction(a)
-        for m in range(7):
+        for m in range(DAYS_COUNT):
             Predictionmatrix[m][k] = predictionData[m]
 
     return Predictionmatrix
@@ -102,8 +106,8 @@ def db2csv(fileName):
     # query: date & 10 currencies.
     df = db_prices.find({
         'Date': {'$lt': datetime.datetime.now(),
-                 '$gte': datetime.datetime.now() - datetime.timedelta(days=60),
-                 }, 'Currency code': {'$in': currency_codes}}).sort('Date', DESCENDING)
+                 '$gte': datetime.datetime.now() - datetime.timedelta(days=BASIS_COUNT),
+                 }, 'Currency code': {'$in': currency_codes[:CURS_COUNT]}}).sort('Date', DESCENDING)
     # write a new csv file.
     with open(fileName, 'w', encoding='utf-8', newline='') as files:
         csvfiles = csv.DictWriter(
@@ -128,9 +132,9 @@ Generate rates matrix header.
 
 def curr_codes_date():
     curr_codes_withdate = []
-    for code in currency_codes:
+    for code in currency_codes[:CURS_COUNT]:
         # Todo: change number postfix into date.
-        for k in range(7):
+        for k in range(DAYS_COUNT):
             curr_codes_withdate.append(code + str(k))
     return curr_codes_withdate
 
