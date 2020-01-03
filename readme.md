@@ -18,9 +18,9 @@
 
    > Possible error and solution: [ SSL: CERTIFICATE_VERIFY_FAILED error](https://stackoverflow.com/questions/50236117/scraping-ssl-certificate-verify-failed-error-for-http-en-wikipedia-org)
 
-3. Next, predict.
+3. Next, run.
 
-   `python3 predictionMatrix.py`
+   `python3 project3.py`
 
 ### Explanations
 
