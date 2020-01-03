@@ -14,7 +14,7 @@
 
 2. Then, generate data and store into your own local database.
 
-   `python3 ratePrep.py`
+   `python3 ratesPrep.py`
 
    > Possible error and solution: [ SSL: CERTIFICATE_VERIFY_FAILED error](https://stackoverflow.com/questions/50236117/scraping-ssl-certificate-verify-failed-error-for-http-en-wikipedia-org)
 
