@@ -106,7 +106,6 @@ class Currencies:
         # First, use your detectArbitrage function to find a potential
         # negative cost cycle in the graph.
         self.negCyc = detectArbitrage(self)
-        self.reorderCyc()
 
         # Report if no cycle.
         if len(self.negCyc) == 0:
@@ -120,6 +119,7 @@ class Currencies:
             elif self.negCyc[0] != self.negCyc[-1]:
                 raise Exception('Invalid cycle: start != end')
             else:
+                self.reorderCyc()
                 # There was a cycle, check to ensure arbitrage.
                 arb = 1
                 for cInd in range(0, len(self.negCyc) - 1):
@@ -146,7 +146,7 @@ class Currencies:
 
     def reorderCyc(self):
         if self.currs[self.negCyc[0]][0] != 0:
-            i = 0
+            i = 1
             while self.currs[self.negCyc[i-1]][-1] != '6' or self.currs[self.negCyc[i]][-1] != '0':
                 i += 1
             slice1 = self.negCyc[1:i]
