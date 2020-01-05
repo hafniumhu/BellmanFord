@@ -106,6 +106,7 @@ class Currencies:
         # First, use your detectArbitrage function to find a potential
         # negative cost cycle in the graph.
         self.negCyc = detectArbitrage(self)
+        self.reorderCyc()
 
         # Report if no cycle.
         if len(self.negCyc) == 0:
@@ -135,6 +136,23 @@ class Currencies:
                           ((arb - 1), self.currs[self.negCyc[0]]))
                     print()
                     return True
+
+    """
+    reorderCyc
+    This function takes a negative cycle and reorder it to begin with day 0
+    Input: A list representing negative cycle
+    Output: A list representing reordered cycle
+    """
+
+    def reorderCyc(self):
+        if self.currs[self.negCyc[0]][0] != 0:
+            i = 0
+            while self.currs[self.negCyc[i-1]][-1] != '6' or self.currs[self.negCyc[i]][-1] != '0':
+                i += 1
+            slice1 = self.negCyc[1:i]
+            slice2 = self.negCyc[i:]
+            self.negCyc = slice2 + slice1 + [slice2[0]]
+        # print(self.negCyc)
 
 
 ################################################################################
