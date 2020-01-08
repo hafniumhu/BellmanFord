@@ -26,22 +26,25 @@ currency_codes = ['USD', 'EUR', 'GBP', 'INR',
 CURS_COUNT = 10
 DAYS_COUNT = 7
 BASIS_COUNT = 60
+DATE_LIST = []
 
-with contextlib.redirect_stdout(None):
-    def prediction(df):
-        # Eliminate empty values
-        df = df[np.isfinite(df['y'])]
-        m = Prophet()
-        m.fit(df)
-        future = m.make_future_dataframe(periods=DAYS_COUNT)
-        future.tail()
-        forecast = m.predict(future)
-        forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].tail()
-        temp = np.array(forecast['yhat'][-DAYS_COUNT:])
-        # fig1 = m.plot(forecast)
-        # fig2 = m.plot_components(forecast)
-        # plt.show()
-        return temp
+# with contextlib.redirect_stdout(None):
+def prediction(df):
+    # Eliminate empty values
+    df = df[np.isfinite(df['y'])]
+    m = Prophet()
+    m.fit(df)
+    future = m.make_future_dataframe(periods=DAYS_COUNT)
+    future.tail()
+    forecast = m.predict(future)
+    forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].tail()
+    DATE_LIST = np.array(forecast['ds'][-DAYS_COUNT:])
+    # print(DATE_LIST)
+    temp = np.array(forecast['yhat'][-DAYS_COUNT:])
+    # fig1 = m.plot(forecast)
+    # fig2 = m.plot_components(forecast)
+    # plt.show()
+    return temp
 
 
 """
@@ -153,7 +156,3 @@ def predict():
     print("Predicting...")
     Predictionmatrix = getData(fileName)
     return Predictionmatrix
-
-
-# if __name__ == '__main__':
-#     print(predict())

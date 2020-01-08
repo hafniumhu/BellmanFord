@@ -1,11 +1,3 @@
-"""
-Math 590
-Project 3
-Fall 2019
-
-p3currencies.py
-"""
-
 # Import the Vertex class and project3.py functions.
 from p3vertex import *
 from project3 import detectArbitrage, rates2mat
@@ -209,16 +201,5 @@ def getRates():
     # Initialize rates matrix header
     # by calling curr_codes_date() in predictionMatrix.py.
     currs = curr_codes_date()
-    # currs = ['USD0', 'USD1', 'USD2',
-    #          'GBP0', 'GBP1', 'GBP2',
-    #          'INR0', 'INR1', 'INR2']
-
-    # currs = [['USD0', 'GBP0', 'INR0', 'AUD0', 'CAD0', 'SGD0', 'CHF0', 'MYR0', 'JPY0'],
-    #          ['USD1', 'GBP1', 'INR1', 'AUD1', 'CAD1', 'SGD1', 'CHF1', 'MYR1', 'JPY1'],
-    #          ['USD2', 'GBP2', 'INR2', 'AUD2', 'CAD2', 'SGD2', 'CHF2', 'MYR2', 'JPY2'],
-    #          ['USD3', 'GBP3', 'INR3', 'AUD3', 'CAD3', 'SGD3', 'CHF3', 'MYR3', 'JPY3'],
-    #          ['USD4', 'GBP4', 'INR4', 'AUD4', 'CAD4', 'SGD4', 'CHF4', 'MYR4', 'JPY4'],
-    #          ['USD5', 'GBP5', 'INR5', 'AUD5', 'CAD5', 'SGD5', 'CHF5', 'MYR5', 'JPY5'],
-    #          ['USD6', 'GBP6', 'INR6', 'AUD6', 'CAD6', 'SGD6', 'CHF6', 'MYR6', 'JPY6']]
 
     return rates, currs

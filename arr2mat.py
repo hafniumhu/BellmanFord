@@ -1,11 +1,4 @@
 """
-arr2mat
-
-"""
-import math
-
-
-"""
 Input: 7 arrays containing exchange rates based on USD
 Output: a matrix of exchange rates
 """

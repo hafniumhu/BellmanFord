@@ -1,11 +1,3 @@
-"""
-Math 590
-Project 3
-Fall 2019
-
-p2tests.py
-"""
-
 # Import the Currencies class.
 from p3currencies import *
 
