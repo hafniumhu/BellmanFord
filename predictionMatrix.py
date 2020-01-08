@@ -26,9 +26,8 @@ currency_codes = ['USD', 'EUR', 'GBP', 'INR',
 CURS_COUNT = 10
 DAYS_COUNT = 7
 BASIS_COUNT = 60
-DATE_LIST = []
 
-# with contextlib.redirect_stdout(None):
+
 def prediction(df):
     # Eliminate empty values
     df = df[np.isfinite(df['y'])]
@@ -44,7 +43,7 @@ def prediction(df):
     # fig1 = m.plot(forecast)
     # fig2 = m.plot_components(forecast)
     # plt.show()
-    return temp
+    return temp, DATE_LIST
 
 
 """
@@ -87,11 +86,11 @@ def getData(fileName):
         a = pd.concat([date, df[k]], axis=1)
         a = a.rename(columns={"Date": "ds", k: "y"})
         with suppress_stdout_stderr():
-            predictionData = prediction(a)
+            predictionData, DATE_LIST = prediction(a)
         for m in range(DAYS_COUNT):
             Predictionmatrix[m][k] = predictionData[m]
 
-    return Predictionmatrix
+    return Predictionmatrix, DATE_LIST
 
 
 """
@@ -154,5 +153,5 @@ def predict():
     db2csv(fileName)
     # predict next 7 days.
     print("Predicting...")
-    Predictionmatrix = getData(fileName)
-    return Predictionmatrix
+    Predictionmatrix, DATE_LIST = getData(fileName)
+    return Predictionmatrix , DATE_LIST

@@ -18,6 +18,7 @@ class Currencies:
     adjList # The adjacency list for the currencies.
     adjMat  # The adjacency matrix for the graph.
     negCyc  # List of vertex ranks in the (potential) negative cost cycle.
+    dList   # List of dates that has predicted rates
     """
 
     """
@@ -26,7 +27,7 @@ class Currencies:
 
     def __init__(self):
         # Get the exchange rates and currency names.
-        self.rates, self.currs = getRates()
+        self.rates, self.currs, self.dList = getRates()
 
         # Create the adjacency list.
         self.adjList = [Vertex(r) for r in range(0, len(self.currs))]
@@ -85,9 +86,16 @@ class Currencies:
     """
 
     def printArb(self):
+        # for ind in self.negCyc:
+        #     print(self.currs[ind])
+        arb_list = []
         for ind in self.negCyc:
-            print(self.currs[ind])
-        print()
+            currency = self.currs[ind]
+            date = str(self.dList[int(currency[3])])[0:10]
+            arb_list.append(currency[0:3] + " on date: " + date)
+        # print
+        for i in range(len(arb_list)-1):
+            print(arb_list[i])
         return
 
     """
@@ -175,15 +183,10 @@ def format(list):
 
 
 def getRates():
-    # Get the exchange rates.
-    # arr = getData()
-    # arr = [[1, 2, 5],
-    #        [1, 3, 2],
-    #        [1, 9, 5]]
 
     # Get rates matrix(7 days 10 currencies)
     # by calling predict() in predictionMatrix.py.
-    arr = predict()
+    arr, DATE_LIST = predict()
     # Convert raw rates into rates matrix(based on algorithm design)
     rates = arr2mat(arr)
 
@@ -202,4 +205,4 @@ def getRates():
     # by calling curr_codes_date() in predictionMatrix.py.
     currs = curr_codes_date()
 
-    return rates, currs
+    return rates, currs, DATE_LIST
