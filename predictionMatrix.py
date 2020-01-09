@@ -9,6 +9,7 @@ from fbprophet import Prophet
 import datetime
 import csv
 import logging
+import configparser
 from suppress_stdout_stderr import suppress_stdout_stderr
 logging.getLogger('fbprophet').setLevel(logging.WARNING)
 
@@ -100,11 +101,12 @@ generate csv file using db query result.
 
 
 def db2csv(fileName):
-    # db preparation.
-    client = MongoClient('localhost', 27017)  # Client: Make a connection
-    db = client['currency']  # DB: currency
-    db_prices = db['prices']  # Collection: prices
-
+    # Make a connection
+    config = configparser.ConfigParser()
+    config.read('config.ini')
+    client = MongoClient(config['atlas']['url'])
+    db = client[config['atlas']['db_name']]
+    db_prices = db[config['atlas']['collection_name']]  # Collection: prices
     # query: date & 10 currencies.
     df = db_prices.find({
         'Date': {'$lt': datetime.datetime.now(),
