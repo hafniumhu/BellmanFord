@@ -42,9 +42,13 @@ def prediction(df):
     DATE_LIST = np.array(forecast['ds'][-DAYS_COUNT:])
     # print(DATE_LIST)
     temp = np.array(forecast['yhat'][-DAYS_COUNT:])
-    fig1 = m.plot(forecast)
-    fig2 = m.plot_components(forecast)
-    plt.show()
+    for i in range(len(temp)):
+        if  temp[i]<=0:
+            temp[i] = temp[i-1]
+    print(temp)
+    #fig1 = m.plot(forecast)
+    #fig2 = m.plot_components(forecast)
+    #plt.show()
     return temp, DATE_LIST
 
 
@@ -87,8 +91,8 @@ def getData(fileName):
     for k in range(CURS_COUNT):
         a = pd.concat([date, df[k]], axis=1)
         a = a.rename(columns={"Date": "ds", k: "y"})
-        with suppress_stdout_stderr():
-            predictionData, DATE_LIST = prediction(a)
+        #with suppress_stdout_stderr():
+        predictionData, DATE_LIST = prediction(a)
         for m in range(DAYS_COUNT):
             Predictionmatrix[m][k] = predictionData[m]
 
