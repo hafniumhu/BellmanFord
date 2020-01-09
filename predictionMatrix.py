@@ -27,6 +27,7 @@ currency_codes = ['USD', 'EUR', 'GBP', 'INR',
 CURS_COUNT = 10
 DAYS_COUNT = 7
 BASIS_COUNT = 60
+DAYS_HISTORICAL = 30
 
 
 def prediction(df):
@@ -41,9 +42,9 @@ def prediction(df):
     DATE_LIST = np.array(forecast['ds'][-DAYS_COUNT:])
     # print(DATE_LIST)
     temp = np.array(forecast['yhat'][-DAYS_COUNT:])
-    # fig1 = m.plot(forecast)
-    # fig2 = m.plot_components(forecast)
-    # plt.show()
+    fig1 = m.plot(forecast)
+    fig2 = m.plot_components(forecast)
+    plt.show()
     return temp, DATE_LIST
 
 
@@ -71,8 +72,8 @@ def getData(fileName):
     # We need more data to do prediction.
     # Number of rows is number of days we used to predict
     # Each column represents each currency
-    matrix = np.zeros((DAYS_COUNT, CURS_COUNT))
-    for i in range(DAYS_COUNT):
+    matrix = np.zeros((DAYS_HISTORICAL, CURS_COUNT))
+    for i in range(DAYS_HISTORICAL):
         for k in range(CURS_COUNT):
             matrix[i][k] = allRates.pop(0)
 
@@ -156,4 +157,4 @@ def predict():
     # predict next 7 days.
     print("Predicting...")
     Predictionmatrix, DATE_LIST = getData(fileName)
-    return Predictionmatrix , DATE_LIST
+    return Predictionmatrix, DATE_LIST
