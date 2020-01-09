@@ -91,8 +91,8 @@ def getData(fileName):
     for k in range(CURS_COUNT):
         a = pd.concat([date, df[k]], axis=1)
         a = a.rename(columns={"Date": "ds", k: "y"})
-        #with suppress_stdout_stderr():
-        predictionData, DATE_LIST = prediction(a)
+        with suppress_stdout_stderr():
+            predictionData, DATE_LIST = prediction(a)
         for m in range(DAYS_COUNT):
             Predictionmatrix[m][k] = predictionData[m]
 
