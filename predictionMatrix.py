@@ -9,6 +9,7 @@ from fbprophet import Prophet
 import datetime
 import csv
 import logging
+import configparser
 from suppress_stdout_stderr import suppress_stdout_stderr
 logging.getLogger('fbprophet').setLevel(logging.WARNING)
 
@@ -26,6 +27,7 @@ currency_codes = ['USD', 'EUR', 'GBP', 'INR',
 CURS_COUNT = 10
 DAYS_COUNT = 7
 BASIS_COUNT = 60
+DAYS_HISTORICAL = 30
 
 
 def prediction(df):
@@ -40,9 +42,13 @@ def prediction(df):
     DATE_LIST = np.array(forecast['ds'][-DAYS_COUNT:])
     # print(DATE_LIST)
     temp = np.array(forecast['yhat'][-DAYS_COUNT:])
-    # fig1 = m.plot(forecast)
-    # fig2 = m.plot_components(forecast)
-    # plt.show()
+    for i in range(len(temp)):
+        if  temp[i]<=0:
+            temp[i] = temp[i-1]
+    print(temp)
+    #fig1 = m.plot(forecast)
+    #fig2 = m.plot_components(forecast)
+    #plt.show()
     return temp, DATE_LIST
 
 
@@ -70,8 +76,8 @@ def getData(fileName):
     # We need more data to do prediction.
     # Number of rows is number of days we used to predict
     # Each column represents each currency
-    matrix = np.zeros((DAYS_COUNT, CURS_COUNT))
-    for i in range(DAYS_COUNT):
+    matrix = np.zeros((DAYS_HISTORICAL, CURS_COUNT))
+    for i in range(DAYS_HISTORICAL):
         for k in range(CURS_COUNT):
             matrix[i][k] = allRates.pop(0)
 
@@ -85,8 +91,8 @@ def getData(fileName):
     for k in range(CURS_COUNT):
         a = pd.concat([date, df[k]], axis=1)
         a = a.rename(columns={"Date": "ds", k: "y"})
-        with suppress_stdout_stderr():
-            predictionData, DATE_LIST = prediction(a)
+        #with suppress_stdout_stderr():
+        predictionData, DATE_LIST = prediction(a)
         for m in range(DAYS_COUNT):
             Predictionmatrix[m][k] = predictionData[m]
 
@@ -100,11 +106,12 @@ generate csv file using db query result.
 
 
 def db2csv(fileName):
-    # db preparation.
-    client = MongoClient('localhost', 27017)  # Client: Make a connection
-    db = client['currency']  # DB: currency
-    db_prices = db['prices']  # Collection: prices
-
+    # Make a connection
+    config = configparser.ConfigParser()
+    config.read('config.ini')
+    client = MongoClient(config['atlas']['url'])
+    db = client[config['atlas']['db_name']]
+    db_prices = db[config['atlas']['collection_name']]  # Collection: prices
     # query: date & 10 currencies.
     df = db_prices.find({
         'Date': {'$lt': datetime.datetime.now(),
@@ -154,4 +161,4 @@ def predict():
     # predict next 7 days.
     print("Predicting...")
     Predictionmatrix, DATE_LIST = getData(fileName)
-    return Predictionmatrix , DATE_LIST
+    return Predictionmatrix, DATE_LIST
