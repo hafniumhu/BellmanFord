@@ -35,6 +35,7 @@ def insert1Day(row, currency_codes, date):
     list.append(dict({'Date': datetime.strptime(date, '%Y-%m-%d'),
                       'Currency code': 'EUR',
                       'Units per USD': baseUSD(row[0], 1)}))
+    print(list)
     db_prices.insert_many(list)
 
 
@@ -60,7 +61,7 @@ def updateToday(url):
         except:
             pass
     # If not included in db, insert today's currency data.
-    if not db_prices.find({"Date": datetime.strptime(date, '%Y-%m-%d')}).count():
+    if not db_prices.count_documents({"Date": datetime.strptime(date, '%Y-%m-%d')}):
         insert1Day(rates, cur, date=date)
 
 
