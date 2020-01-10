@@ -33,6 +33,7 @@ DAYS_HISTORICAL = 30
 def prediction(df):
     # Eliminate empty values
     df = df[np.isfinite(df['y'])]
+    rates = np.array(df['y'])
     m = Prophet()
     m.fit(df)
     future = m.make_future_dataframe(periods=DAYS_COUNT)
@@ -40,17 +41,20 @@ def prediction(df):
     forecast = m.predict(future)
     forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].tail()
     DATE_LIST = np.array(forecast['ds'][-DAYS_COUNT:])
-    # print(DATE_LIST)
+    #print(DATE_LIST)
     temp = np.array(forecast['yhat'][-DAYS_COUNT:])
+    print(temp)
     for i in range(len(temp)):
         if  temp[i]<=0:
-            temp[i] = temp[i-1]
+            if i==0 or i==1:
+                temp[i] = rates[-1]
+            else:
+                temp[i] = temp[i-1]
     print(temp)
     #fig1 = m.plot(forecast)
     #fig2 = m.plot_components(forecast)
     #plt.show()
     return temp, DATE_LIST
-
 
 """
 This function read historical data from cvs file.
